@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lithium Level Calculator for Psychiatrists and Psychiatric NPs</title>
+    <meta
+      name="description"
+      content="A clinician-facing lithium level calculator for psychiatrists and psychiatric nurse practitioners. Estimate steady-state lithium levels after new initiation or a dose change using lithium level timing and dose history."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Lithium Level Estimator" />
+    <meta property="og:title" content="Lithium Level Calculator for Psychiatrists and Psychiatric NPs" />
+    <meta
+      property="og:description"
+      content="Estimate lithium steady-state levels after initiation or dose change with dosing history, trough timing, and clinician-focused safety guardrails."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Lithium Level Estimator",
+        "applicationCategory": "MedicalApplication",
+        "operatingSystem": "Web",
+        "audience": {
+          "@type": "MedicalAudience",
+          "audienceType": "Psychiatrists and psychiatric nurse practitioners"
+        },
+        "description": "Clinical decision-support calculator that estimates lithium steady-state levels after new initiation or a dose change using dose history, blood draw timing, and lithium pharmacokinetic assumptions."
+      }
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Lithium pharmacokinetic calculator</p>
+        <h1>Lithium Level Estimator</h1>
+        <p class="dek">
+          Estimate a future steady-state lithium level from an early level or from a one-time dose change.
+        </p>
+      </div>
+      <div class="clinical-note">
+        For psychiatrists and psychiatric nurse practitioners. Use as clinical decision support only; confirm with repeat lithium levels and clinical judgment.
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="safety-banner" aria-labelledby="safety-heading">
+        <div>
+          <p class="eyebrow">Safety first</p>
+          <h2 id="safety-heading">Not a prescription or substitute for clinical judgment</h2>
+        </div>
+        <div class="safety-grid">
+          <p>
+            This tool provides estimates for licensed clinicians. It does not diagnose, treat, prescribe, or replace independent review of the patient, lab timing, formulation, renal function, sodium and fluid status, pregnancy risk, adherence, toxicity symptoms, or interacting medications.
+          </p>
+          <p>
+            No patient data is stored by this static calculator. You are responsible for verifying inputs, interpreting results, choosing therapy, monitoring safety, and complying with your local standard of care.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel input-panel" aria-labelledby="inputs-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Step 1</p>
+            <h2 id="inputs-heading">Choose The Situation</h2>
+          </div>
+          <button id="resetButton" class="icon-button" type="button" aria-label="Reset calculator" title="Reset calculator">
+            <span aria-hidden="true">&olarr;</span>
+          </button>
+        </div>
+
+        <div class="mode-switch" role="tablist" aria-label="Lithium model type">
+          <button id="modeInitiation" class="mode-button active" type="button" data-mode="initiation">
+            <strong>New start</strong>
+            <span>Use an early level plus the actual doses already given.</span>
+          </button>
+          <button id="modeChange" class="mode-button" type="button" data-mode="change">
+            <strong>Dose change</strong>
+            <span>Use a prior steady level and one planned regimen change.</span>
+          </button>
+        </div>
+
+        <section id="initiationInputs" class="mode-section">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">New start</p>
+              <h2>Early Level After Starting Lithium</h2>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="initMeasuredLevel">
+                Measured lithium level
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: measured lithium level" data-tip="Enter the serum lithium level drawn before steady state. This works best when the draw time is known.">?</span>
+              </label>
+              <div class="input-with-unit">
+                <input id="initMeasuredLevel" type="number" min="0" step="0.01" value="0.6" />
+                <span>mEq/L</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="initDrawTime">
+                Blood draw time
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: blood draw time" data-tip="Use the actual collection time. The calculator compares this to each dose time, so trough timing matters.">?</span>
+              </label>
+              <input id="initDrawTime" type="datetime-local" />
+            </div>
+
+            <div class="field">
+              <label for="initDoseAmount">
+                Ongoing dose amount
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: ongoing dose amount" data-tip="Amount in each scheduled dose going forward, not the total daily dose. Example: 450 mg BID means enter 450 and BID.">?</span>
+              </label>
+              <div class="input-with-unit">
+                <input id="initDoseAmount" type="number" min="0" step="50" value="400" />
+                <span>mg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="initSchedule">Ongoing schedule</label>
+              <select id="initSchedule">
+                <option value="qd">qD</option>
+                <option value="qhs">qHS</option>
+                <option value="bid" selected>BID</option>
+                <option value="tid">TID</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="initFormulation">
+                Formulation
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: formulation" data-tip="Formulation mainly changes early post-dose absorption. It matters most when the level is drawn soon after a dose.">?</span>
+              </label>
+              <select id="initFormulation">
+                <option value="ir">Immediate-release tablet/capsule</option>
+                <option value="er">Extended-release tablet</option>
+                <option value="liquid">Liquid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="dose-card">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Dose history</p>
+                <h2>Individual Doses Before Level</h2>
+                <p class="inline-help">Enter only doses already taken before the blood draw.</p>
+              </div>
+              <button id="addDoseButton" class="text-button" type="button">Add Dose</button>
+            </div>
+            <div class="dose-table" id="doseRows" aria-label="Lithium dose history"></div>
+          </div>
+        </section>
+
+        <section id="changeInputs" class="mode-section hidden">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Dose change</p>
+              <h2>One Change From Prior Steady State</h2>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="priorSteadyLevel">
+                Prior steady lithium level
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: prior steady lithium level" data-tip="Use a lithium level from a stable prior regimen, ideally using the same sampling convention you will use clinically.">?</span>
+              </label>
+              <div class="input-with-unit">
+                <input id="priorSteadyLevel" type="number" min="0" step="0.01" value="0.6" />
+                <span>mEq/L</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="oldDoseAmount">
+                Prior dose amount
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: prior dose amount" data-tip="Amount in each dose on the old steady regimen, not the total daily dose.">?</span>
+              </label>
+              <div class="input-with-unit">
+                <input id="oldDoseAmount" type="number" min="0" step="50" value="300" />
+                <span>mg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="oldSchedule">Prior schedule</label>
+              <select id="oldSchedule">
+                <option value="qd">qD</option>
+                <option value="qhs">qHS</option>
+                <option value="bid" selected>BID</option>
+                <option value="tid">TID</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="newDoseAmount">
+                New dose amount
+                <span class="help-tip" tabindex="0" role="button" aria-label="Help: new dose amount" data-tip="Amount in each dose on the new regimen. The app estimates the new steady level by dose ratio.">?</span>
+              </label>
+              <div class="input-with-unit">
+                <input id="newDoseAmount" type="number" min="0" step="50" value="450" />
+                <span>mg</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="newSchedule">New schedule</label>
+              <select id="newSchedule">
+                <option value="qd">qD</option>
+                <option value="qhs">qHS</option>
+                <option value="bid" selected>BID</option>
+                <option value="tid">TID</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <div class="shared-inputs">
+          <div class="field">
+            <label for="targetLevel">
+              Desired lithium level
+              <span class="help-tip" tabindex="0" role="button" aria-label="Help: desired lithium level" data-tip="Enter the level you are aiming for. The recommendation is rounded to the nearest 50 mg per dose by default.">?</span>
+            </label>
+            <div class="input-with-unit">
+              <input id="targetLevel" type="number" min="0" step="0.01" value="0.8" />
+              <span>mEq/L</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="assumption-box" id="assumptionBox"></div>
+      </section>
+
+      <section class="panel results-panel" aria-labelledby="results-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Step 2</p>
+            <h2 id="results-heading">Estimate</h2>
+          </div>
+          <span class="status-pill" id="statusPill">24 h model</span>
+        </div>
+
+        <div class="range-card">
+          <span class="metric-label">
+            Estimated steady-state lithium level
+            <span class="help-tip compact-tip" tabindex="0" role="button" aria-label="Help: steady-state estimate" data-tip="This is an estimate of the future level if the entered regimen continues and assumptions hold. It is not a confirmed level.">?</span>
+          </span>
+          <strong id="steadyLevel">--</strong>
+          <div class="range-line">
+            <span id="rangeLow">--</span>
+            <div class="range-track">
+              <span id="rangeMarker"></span>
+            </div>
+            <span id="rangeHigh">--</span>
+          </div>
+          <p id="rangeSummary">Range uses lithium half-lives from 18 to 36 hours. The main estimate uses 24 hours.</p>
+        </div>
+
+        <div class="result-grid">
+          <div class="metric">
+            <span class="metric-label">
+              Regimen for desired level
+              <span class="help-tip compact-tip" tabindex="0" role="button" aria-label="Help: regimen for desired level" data-tip="A proportional estimate rounded to practical 50 mg increments. Verify with follow-up levels before relying on it clinically.">?</span>
+            </span>
+            <strong id="targetDose">--</strong>
+            <span id="targetDoseRaw">--</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label" id="timingLabel">Blood draw timing</span>
+            <strong id="observedTiming">--</strong>
+            <span id="observedSummary">--</span>
+          </div>
+        </div>
+
+        <div class="chart-shell">
+          <canvas id="levelChart" width="720" height="320" aria-label="Lithium level projection"></canvas>
+        </div>
+
+        <div class="formula-strip" id="formulaStrip"></div>
+      </section>
+
+      <section class="panel sensitivity-panel" aria-labelledby="sensitivity-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Range detail</p>
+            <h2 id="sensitivity-heading">Why The Range Exists</h2>
+          </div>
+        </div>
+        <div class="range-explainer">
+          <div>
+            <strong>Fast clearance</strong>
+            <span>18 hour half-life</span>
+            <b id="fastEstimate">--</b>
+          </div>
+          <div>
+            <strong>Typical estimate</strong>
+            <span>24 hour half-life</span>
+            <b id="typicalEstimate">--</b>
+          </div>
+          <div>
+            <strong>Slow clearance</strong>
+            <span>36 hour half-life</span>
+            <b id="slowEstimate">--</b>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel reference-panel" aria-labelledby="references-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Clinical guardrails</p>
+            <h2 id="references-heading">Timing, Formulation, And References</h2>
+          </div>
+        </div>
+        <div class="guardrail-grid">
+          <div>
+            <h3>Dose change model</h3>
+            <p>
+              Use when the patient was already at steady state and you want a proportional estimate after one regimen change. It assumes comparable adherence, formulation, renal function, and sampling convention.
+            </p>
+          </div>
+          <div>
+            <h3>New start model</h3>
+            <p>
+              Use when lithium was newly initiated and a level was drawn before steady state. Enter the actual doses before the blood draw; formulation matters most when the draw is soon after a dose.
+            </p>
+          </div>
+          <div>
+            <h3>Confirm before acting</h3>
+            <p>
+              This tool estimates a dose, not a prescription. Recheck levels after changes and account for renal function, fluid and sodium status, adherence, toxicity symptoms, pregnancy risk, and interacting drugs.
+            </p>
+          </div>
+        </div>
+        <ul class="references">
+          <li><a href="https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=083ca85f-a450-4fe9-973e-47a13cd18dd1" target="_blank" rel="noreferrer">DailyMed: Lithium carbonate capsule label</a></li>
+        </ul>
+      </section>
+
+      <section class="utility-panel" aria-labelledby="utility-heading">
+        <div>
+          <p class="eyebrow">Clinical utility</p>
+          <h2 id="utility-heading">Lithium level calculator for psychiatric clinicians</h2>
+          <p>
+            This lithium level calculator helps psychiatrists and psychiatric nurse practitioners estimate where a lithium level may land before a patient has fully reached steady state. It supports two common workflows: new lithium initiation with an early lithium level, and a dose change from a known steady-state lithium level.
+          </p>
+        </div>
+        <div class="utility-grid">
+          <div>
+            <strong>1. Choose the workflow</strong>
+            <span>New start for early levels; dose change for a stable patient whose regimen changed once.</span>
+          </div>
+          <div>
+            <strong>2. Enter timing carefully</strong>
+            <span>For new starts, dose times and blood draw timing are central to the estimate.</span>
+          </div>
+          <div>
+            <strong>3. Confirm clinically</strong>
+            <span>Use the estimate to plan monitoring and discussion, then confirm with follow-up levels.</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <strong>Medical and legal notice</strong>
+        <p>
+          This website is provided for educational and clinical decision-support purposes only, without warranty of accuracy, completeness, fitness for a particular purpose, or suitability for any individual patient. It is intended for licensed clinicians, not patients, emergencies, or lithium toxicity management. Use of this tool does not create a clinician-patient relationship with the site creator. The treating clinician remains solely responsible for all clinical decisions, documentation, monitoring, and patient safety.
+        </p>
+      </footer>
+    </main>
+
+    <template id="doseRowTemplate">
+      <div class="dose-row simple">
+        <div class="field">
+          <label>Dose time</label>
+          <input class="dose-time" type="datetime-local" />
+        </div>
+        <div class="field">
+          <label>Amount</label>
+          <div class="input-with-unit">
+            <input class="dose-amount" type="number" min="0" step="50" />
+            <span>mg</span>
+          </div>
+        </div>
+        <button class="icon-button remove-dose" type="button" aria-label="Remove dose" title="Remove dose">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
