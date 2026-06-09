@@ -488,7 +488,7 @@ input[type="range"] {
 }
 
 .dose-row.simple {
-  grid-template-columns: minmax(12rem, 1.2fr) minmax(7rem, 0.8fr) auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(5.75rem, 0.8fr) auto;
 }
 
 .shared-inputs {
@@ -833,7 +833,7 @@ tbody tr:last-child td {
   font-size: 1.25rem;
 }
 
-@media (max-width: 1020px) {
+@media (max-width: 1120px) {
   .topbar,
   .workspace {
     grid-template-columns: 1fr;
