@@ -142,8 +142,6 @@ select {
 }
 
 .input-panel {
-  position: sticky;
-  top: 1rem;
   align-self: start;
 }
 
@@ -840,10 +838,6 @@ tbody tr:last-child td {
   .safety-banner,
   .utility-panel {
     grid-template-columns: 1fr;
-  }
-
-  .input-panel {
-    position: static;
   }
 
   .result-grid,
