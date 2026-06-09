@@ -1,6 +1,6 @@
 # Lithium Level Estimator
 
-A static lithium steady-state level estimator for psychiatrists and psychiatric nurse practitioners.
+A static lithium steady-state level estimator for psychiatrists and other psychiatric providers.
 
 ## Local Preview
 
