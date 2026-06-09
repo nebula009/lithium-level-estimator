@@ -180,28 +180,22 @@ function addDoseRow({ time, amount } = {}) {
   elements.doseRows.appendChild(fragment);
 }
 
-function resetDefaults() {
-  const now = new Date();
-  const draw = new Date(now);
-  draw.setHours(8, 0, 0, 0);
-
-  elements.initDrawTime.value = dateToLocalInput(draw);
-  elements.initMeasuredLevel.value = 0.6;
-  elements.initDoseAmount.value = 400;
+function clearCaseInputs() {
+  elements.initDrawTime.value = "";
+  elements.initMeasuredLevel.value = "";
+  elements.initDoseAmount.value = "";
   elements.initSchedule.value = "bid";
   elements.initFormulation.value = "ir";
   elements.doseRows.innerHTML = "";
-  addDoseRow({ time: new Date(draw.getTime() - 36 * MS_PER_HOUR), amount: 300 });
-  addDoseRow({ time: new Date(draw.getTime() - 24 * MS_PER_HOUR), amount: 400 });
-  addDoseRow({ time: new Date(draw.getTime() - 12 * MS_PER_HOUR), amount: 400 });
+  addDoseRow();
 
-  elements.priorSteadyLevel.value = 0.6;
-  elements.oldDoseAmount.value = 300;
+  elements.priorSteadyLevel.value = "";
+  elements.oldDoseAmount.value = "";
   elements.oldSchedule.value = "bid";
-  elements.newDoseAmount.value = 450;
+  elements.newDoseAmount.value = "";
   elements.newSchedule.value = "bid";
 
-  elements.targetLevel.value = 0.8;
+  elements.targetLevel.value = "";
   setMode(activeMode);
 }
 
@@ -580,7 +574,7 @@ elements.addDoseButton.addEventListener("click", () => {
   update();
 });
 
-elements.resetButton.addEventListener("click", resetDefaults);
+elements.resetButton.addEventListener("click", clearCaseInputs);
 
 [
   elements.initMeasuredLevel,
@@ -596,4 +590,4 @@ elements.resetButton.addEventListener("click", resetDefaults);
   elements.targetLevel
 ].forEach((element) => element.addEventListener("input", update));
 
-window.setTimeout(resetDefaults, 0);
+window.setTimeout(clearCaseInputs, 0);

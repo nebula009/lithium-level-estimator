@@ -859,7 +859,15 @@ tbody tr:last-child td {
 @media (max-width: 620px) {
   .topbar,
   .workspace {
-    width: min(100% - 1rem, 1440px);
+    width: min(100% - 0.75rem, 1440px);
+  }
+
+  .topbar {
+    padding-top: 0.85rem;
+  }
+
+  .dek {
+    font-size: 0.95rem;
   }
 
   .field-grid,
@@ -873,8 +881,31 @@ tbody tr:last-child td {
     grid-template-columns: 1fr;
   }
 
+  .mode-button {
+    min-height: auto;
+  }
+
+  .section-heading {
+    align-items: start;
+  }
+
+  .dose-card .section-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .dose-card .text-button {
+    align-self: end;
+    min-width: 5.7rem;
+  }
+
+  .dose-row.simple {
+    grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 0.7fr) 3rem;
+  }
+
   .dose-row .remove-dose {
-    width: 100%;
+    width: 3rem;
+    height: 2.75rem;
   }
 
   .metric {
@@ -889,11 +920,19 @@ tbody tr:last-child td {
   .results-panel,
   .sensitivity-panel,
   .reference-panel {
-    padding: 0.75rem;
+    padding: 0.7rem;
   }
 
   .input-with-unit {
-    grid-template-columns: minmax(0, 1fr) minmax(4.5rem, auto);
+    grid-template-columns: minmax(0, 1fr) minmax(3.75rem, auto);
+  }
+
+  .input-with-unit span {
+    padding: 0 0.55rem;
+  }
+
+  input[type="datetime-local"] {
+    font-size: 0.95rem;
   }
 
   .topbar h1 {
