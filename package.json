@@ -5,7 +5,7 @@
   "description": "Static lithium steady-state level estimator for psychiatric clinicians.",
   "scripts": {
     "preview": "python3 -m http.server 8765",
-    "check": "node --check app.js && ! LC_ALL=C rg -n \"[^[:ascii:]]\" index.html styles.css app.js robots.txt README.md 404.html",
+    "check": "node --check app.js && ! LC_ALL=C rg -n \"[^[:ascii:]]\" index.html styles.css app.js robots.txt README.md 404.html CNAME",
     "publish": "bash scripts/publish.sh"
   }
 }

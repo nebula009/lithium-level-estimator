@@ -28,7 +28,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir _site
-          cp index.html styles.css app.js robots.txt 404.html _site/
+          cp index.html styles.css app.js robots.txt 404.html CNAME _site/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

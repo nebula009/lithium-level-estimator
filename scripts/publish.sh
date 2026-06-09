@@ -10,7 +10,7 @@ fi
 
 npm run check
 
-git add index.html styles.css app.js robots.txt 404.html package.json README.md .github/workflows/deploy.yml scripts/publish.sh
+git add index.html styles.css app.js robots.txt 404.html CNAME package.json README.md .github/workflows/deploy.yml scripts/publish.sh
 
 if git diff --cached --quiet; then
   echo "No changes to publish."
